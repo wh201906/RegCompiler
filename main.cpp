@@ -1,5 +1,5 @@
 ﻿#include "mainwindow.h"
-#include "field.h"
+#include "common.hpp"
 #include <QApplication>
 
 int main(int argc, char *argv[])

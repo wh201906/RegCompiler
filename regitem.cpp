@@ -15,12 +15,12 @@ RegItem::~RegItem()
     delete ui;
 }
 
-int RegItem::getVal()
+quint64 RegItem::getVal()
 {
     return this->val;
 }
 
-void RegItem::setVal(int newVal)
+void RegItem::setVal(quint64 newVal)
 {
     this->val = newVal;
 }
@@ -31,9 +31,10 @@ void RegItem::setField(Field field)
     len = field.end - field.start + 1;
     hexLen = (len - 1) / 4 + 1; // len should be bigger than 1
     ui->lenLabel->setText(QString("[%1:%2], %3").arg(field.end).arg(field.start).arg(len));
+    ui->maskEdit->setText(QString("0x") + QString::number(getMask(field), 16).toUpper());
 }
 
-void RegItem::updataEdit(int type)
+void RegItem::updateEdit(int type)
 {
     QString tmp;
     ui->binEdit->blockSignals(true);
@@ -49,7 +50,7 @@ void RegItem::updataEdit(int type)
     }
     if(type & VAL_HEX)
     {
-        tmp = QString::number(val, 16);
+        tmp = QString::number(val, 16).toUpper(); // I prefer hex numbers look like 0xABCD
         if(tmp.length() < hexLen)
             ui->hexEdit->setText(QString(hexLen - tmp.length(), '0') + tmp);
         else
@@ -67,38 +68,38 @@ void RegItem::updataEdit(int type)
 void RegItem::on_binEdit_textChanged(const QString &arg1)
 {
     bool isOk;
-    int tmp;
+    quint64 tmp;
     tmp = arg1.toInt(&isOk, 2);
     if(isOk)
     {
         setVal(tmp);
         emit valChanged(field, val);
-        updataEdit(VAL_DEC | VAL_HEX);
+        updateEdit(VAL_DEC | VAL_HEX);
     }
 }
 
 void RegItem::on_hexEdit_textChanged(const QString &arg1)
 {
     bool isOk;
-    int tmp;
+    quint64 tmp;
     tmp = arg1.toInt(&isOk, 16);
     if(isOk)
     {
         setVal(tmp);
         emit valChanged(field, val);
-        updataEdit(VAL_DEC | VAL_BIN);
+        updateEdit(VAL_DEC | VAL_BIN);
     }
 }
 
 void RegItem::on_decEdit_textChanged(const QString &arg1)
 {
     bool isOk;
-    int tmp;
+    quint64 tmp;
     tmp = arg1.toInt(&isOk, 10);
     if(isOk)
     {
         setVal(tmp);
         emit valChanged(field, val);
-        updataEdit(VAL_BIN | VAL_HEX);
+        updateEdit(VAL_BIN | VAL_HEX);
     }
 }

@@ -16,11 +16,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->itemVLayout->addWidget(mainReg);
     ui->itemVLayout->addLayout(itemGLayout);
     connect(mainReg, &RegItem::valChanged, this, &MainWindow::onMainValChanged);
+    qDebug() << getMask({0, 0});
 }
 
 MainWindow::~MainWindow()
 {
-
     delete ui;
 }
 
@@ -35,9 +35,31 @@ void MainWindow::removeAll()
     }
 }
 
-void MainWindow::onMainValChanged(Field field, int val)
+void MainWindow::onMainValChanged(Field field, quint64 val)
 {
+    quint64 mask, newVal;
+    QMapIterator<Field, RegItem*> it(*regMap);
+    while(it.hasNext())
+    {
+        it.next();
+        mask = getMask(it.key());
+        newVal = val & mask;
+        newVal >>= it.key().start;
+        it.value()->setVal(newVal);
+        it.value()->updateEdit(RegItem::VAL_BIN | RegItem::VAL_DEC | RegItem::VAL_HEX);
+    }
+}
 
+void MainWindow::onSubValChanged(Field field, quint64 val)
+{
+    quint64 mainVal;
+    quint64 mask;
+    mainVal = mainReg->getVal();
+    mask = getMask(field);
+    mainVal &= ~mask;
+    mainVal |= (val << field.start)&mask;
+    mainReg->setVal(mainVal);
+    mainReg->updateEdit(RegItem::VAL_BIN | RegItem::VAL_DEC | RegItem::VAL_HEX);
 }
 
 void MainWindow::on_regItemImportButton_clicked()
@@ -54,16 +76,17 @@ void MainWindow::on_regItemImportButton_clicked()
     file.open(QFile::ReadOnly | QFile::Text);
     ui->regItemTable->clearContents();
     ui->regItemTable->setRowCount(0);
+    i = 0;
     while(true)
     {
         tmp = QString(file.readLine()).split(',');
         if(tmp.length() != 4)
             break;
-        i = ui->regItemTable->rowCount();
         ui->regItemTable->insertRow(i);
         ui->regItemTable->setItem(i, 0, new QTableWidgetItem(tmp[0]));
         ui->regItemTable->setItem(i, 1, new QTableWidgetItem(tmp[1]));
         ui->regItemTable->setItem(i, 2, new QTableWidgetItem(tmp[2]));
+        i++;
     }
     file.close();
 }
@@ -115,7 +138,6 @@ void MainWindow::on_regLenBox_valueChanged(int arg1)
 
 void MainWindow::on_changeButton_clicked()
 {
-    int i;
     Field field;
     QString name;
     RegItem* item;
@@ -126,6 +148,7 @@ void MainWindow::on_changeButton_clicked()
         name = ui->regItemTable->item(i, 0)->text();
         item = new RegItem(name, field);
         regMap->insert(field, item);
+        connect(item, &RegItem::valChanged, this, &MainWindow::onSubValChanged);
         itemGLayout->addWidget(item, i / 3, i % 3);
     }
 }

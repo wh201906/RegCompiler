@@ -1,5 +1,5 @@
-﻿#ifndef FIELD_H
-#define FIELD_H
+﻿#ifndef COMMON_HPP
+#define COMMON_HPP
 
 #include <QMetaType>
 
@@ -18,4 +18,15 @@ struct Field
 
 Q_DECLARE_METATYPE(Field);
 
-#endif // FIELD_H
+inline quint64 getMask(Field field)
+{
+    quint64 mask, tmp;
+    mask = (quint64)1 << (field.end + 1);
+    mask--;
+    tmp = (quint64)1 << field.start;
+    tmp--;
+    mask ^= tmp;
+    return mask;
+}
+
+#endif // COMMON_HPP

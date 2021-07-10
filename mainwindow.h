@@ -21,7 +21,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void onMainValChanged(Field field, int val);
+public slots:
+    void onMainValChanged(Field field, quint64 val);
+    void onSubValChanged(Field field, quint64 val);
 private slots:
     void on_regItemImportButton_clicked();
 

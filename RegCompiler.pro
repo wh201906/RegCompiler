@@ -21,7 +21,7 @@ SOURCES += \
     regitem.cpp
 
 HEADERS += \
-    field.h \
+    common.hpp \
     mainwindow.h \
     regitem.h
 

@@ -2,7 +2,7 @@
 #define REGITEM_H
 
 #include <QFrame>
-#include "field.h"
+#include "common.hpp"
 
 namespace Ui
 {
@@ -16,10 +16,17 @@ class RegItem : public QFrame
 public:
     explicit RegItem(const QString& name, Field field, QWidget *parent = nullptr);
     ~RegItem();
-    int getVal();
-    void setVal(int newVal);
+    enum valueType
+    {
+        VAL_BIN = 1,
+        VAL_DEC = 2,
+        VAL_HEX = 4
+    };
+    quint64 getVal();
+    void setVal(quint64 newVal);
 
     void setField(Field field);
+    void updateEdit(int type);
 private slots:
     void on_binEdit_textChanged(const QString &arg1);
 
@@ -27,19 +34,12 @@ private slots:
 
     void on_decEdit_textChanged(const QString &arg1);
 private:
-    enum valueType
-    {
-        VAL_BIN = 1,
-        VAL_DEC = 2,
-        VAL_HEX = 4
-    };
     Ui::RegItem *ui;
-    int val;
+    quint64 val = 0;
     Field field;
     int len, hexLen;
-    void updataEdit(int type);
 signals:
-    void valChanged(Field field, int val);
+    void valChanged(Field field, quint64 val);
 };
 
 #endif // REGITEM_H
