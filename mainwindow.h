@@ -39,6 +39,8 @@ private slots:
 
     void on_changeButton_clicked();
 
+    void on_hideBox_stateChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
     QGridLayout* itemGLayout;

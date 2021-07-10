@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QDebug>
 #include <QFile>
 
@@ -68,19 +69,25 @@ void MainWindow::on_regItemImportButton_clicked()
     QStringList tmp;
     int i;
     QFile file;
-    QTableWidgetItem* item;
     fileName = QFileDialog::getOpenFileName(this, tr("Import"), "", tr("CSV File(*.csv);;All Files(*.*)"));
     if(fileName.isEmpty())
         return;
     file.setFileName(fileName);
-    file.open(QFile::ReadOnly | QFile::Text);
+    if(!file.open(QFile::ReadOnly | QFile::Text))
+    {
+        QMessageBox::critical(this, tr("Error"), tr("Failed to open ") + fileName);
+        return;
+    }
+    tmp = QString(file.readLine()).split(',');
+    ui->nameEdit->setText(tmp[0]);
+    ui->regLenBox->setValue(tmp[1].toInt());
     ui->regItemTable->clearContents();
     ui->regItemTable->setRowCount(0);
     i = 0;
     while(true)
     {
         tmp = QString(file.readLine()).split(',');
-        if(tmp.length() != 4)
+        if(tmp.length() < 3)
             break;
         ui->regItemTable->insertRow(i);
         ui->regItemTable->setItem(i, 0, new QTableWidgetItem(tmp[0]));
@@ -89,6 +96,11 @@ void MainWindow::on_regItemImportButton_clicked()
         i++;
     }
     file.close();
+    if(fileName.contains('\\'))
+        fileName = fileName.split('\\').last();
+    else if(fileName.contains('/'))
+        fileName = fileName.split('/').last();
+    this->setWindowTitle(fileName);
 }
 
 void MainWindow::on_regItemAddButton_clicked()
@@ -106,23 +118,33 @@ void MainWindow::on_regItemExportButton_clicked()
     QString fileName;
     QFile file;
     QTableWidgetItem* item;
-    fileName = QFileDialog::getSaveFileName(this, tr("Export"), "", tr("CSV File(*.csv);;All Files(*.*)"));
+    fileName = QFileDialog::getSaveFileName(this, tr("Export"), ui->nameEdit->text() + "_" + QString::number(ui->regLenBox->value()), tr("CSV File(*.csv);;All Files(*.*)"));
     if(fileName.isEmpty())
         return;
     file.setFileName(fileName);
-    file.open(QFile::WriteOnly | QFile::Text);
+    if(!file.open(QFile::WriteOnly | QFile::Text))
+    {
+        QMessageBox::critical(this, tr("Error"), tr("Failed to open ") + fileName);
+        return;
+    }
+    file.write(ui->nameEdit->text().toUtf8() + "," + QByteArray::number(ui->regLenBox->value()) + "\n");
     for(int i = 0; i < ui->regItemTable->rowCount(); i++)
     {
         for(int j = 0; j < ui->regItemTable->columnCount(); j++)
         {
             item = ui->regItemTable->item(i, j);
             if(item != nullptr)
-                file.write(item->text().toLatin1());
+                file.write(item->text().toUtf8());
             file.write(QByteArray(","));
         }
         file.write(QByteArray("\n"));
     }
     file.close();
+    if(fileName.contains('\\'))
+        fileName = fileName.split('\\').last();
+    else if(fileName.contains('/'))
+        fileName = fileName.split('/').last();
+    this->setWindowTitle(fileName);
 }
 
 void MainWindow::on_regItemClearButton_clicked()
@@ -152,4 +174,9 @@ void MainWindow::on_changeButton_clicked()
         connect(item, &RegItem::valChanged, this, &MainWindow::onSubValChanged);
         itemGLayout->addWidget(item, i / column, i % column);
     }
+}
+
+void MainWindow::on_hideBox_stateChanged(int arg1)
+{
+    ui->leftFrame->setVisible(arg1 == Qt::Checked ? false : true);
 }
