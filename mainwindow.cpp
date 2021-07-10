@@ -141,6 +141,7 @@ void MainWindow::on_changeButton_clicked()
     Field field;
     QString name;
     RegItem* item;
+    int column = ui->columnBox->value();
     removeAll();
     for(int i = 0; i < ui->regItemTable->rowCount(); i++)
     {
@@ -149,6 +150,6 @@ void MainWindow::on_changeButton_clicked()
         item = new RegItem(name, field);
         regMap->insert(field, item);
         connect(item, &RegItem::valChanged, this, &MainWindow::onSubValChanged);
-        itemGLayout->addWidget(item, i / 3, i % 3);
+        itemGLayout->addWidget(item, i / column, i % column);
     }
 }
