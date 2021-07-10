@@ -1,17 +1,13 @@
 ﻿#include "regitem.h"
 #include "ui_regitem.h"
 
-RegItem::RegItem(const QString& name, int startBit, int stopBit, QWidget *parent) :
+RegItem::RegItem(const QString& name, Field field, QWidget *parent) :
     QFrame(parent),
     ui(new Ui::RegItem)
 {
     ui->setupUi(this);
-    this->setLayout(ui->mainLayout);
     ui->nameLabel->setText(name);
-    len = stopBit - startBit + 1;
-    hexLen = (len - 1) / 4 + 1;
-    ui->lenLabel->setText(QString("[%1:%2], %3").arg(stopBit).arg(startBit).arg(len));
-
+    setField(field);
 }
 
 RegItem::~RegItem()
@@ -27,6 +23,14 @@ int RegItem::getVal()
 void RegItem::setVal(int newVal)
 {
     this->val = newVal;
+}
+
+void RegItem::setField(Field field)
+{
+    this->field = field;
+    len = field.end - field.start + 1;
+    hexLen = (len - 1) / 4 + 1; // len should be bigger than 1
+    ui->lenLabel->setText(QString("[%1:%2], %3").arg(field.end).arg(field.start).arg(len));
 }
 
 void RegItem::updataEdit(int type)
@@ -68,6 +72,7 @@ void RegItem::on_binEdit_textChanged(const QString &arg1)
     if(isOk)
     {
         setVal(tmp);
+        emit valChanged(field, val);
         updataEdit(VAL_DEC | VAL_HEX);
     }
 }
@@ -80,6 +85,7 @@ void RegItem::on_hexEdit_textChanged(const QString &arg1)
     if(isOk)
     {
         setVal(tmp);
+        emit valChanged(field, val);
         updataEdit(VAL_DEC | VAL_BIN);
     }
 }
@@ -92,6 +98,7 @@ void RegItem::on_decEdit_textChanged(const QString &arg1)
     if(isOk)
     {
         setVal(tmp);
+        emit valChanged(field, val);
         updataEdit(VAL_BIN | VAL_HEX);
     }
 }

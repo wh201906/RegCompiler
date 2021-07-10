@@ -10,8 +10,12 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->gridLayout->addWidget(new RegItem("name", 0, 3, this));
-    ui->gridLayout->addWidget(new RegItem("Name", 4, 8, this));
+    itemGLayout = new QGridLayout(this);
+    regMap = new QMap<Field, RegItem*>;
+    mainReg = new RegItem("main", {0, 0}, this);
+    ui->itemVLayout->addWidget(mainReg);
+    ui->itemVLayout->addLayout(itemGLayout);
+    connect(mainReg, &RegItem::valChanged, this, &MainWindow::onMainValChanged);
 }
 
 MainWindow::~MainWindow()
@@ -20,6 +24,21 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::removeAll()
+{
+    QMapIterator<Field, RegItem*> it(*regMap);
+    while(it.hasNext())
+    {
+        it.next();
+        delete it.value();
+        regMap->remove(it.key());
+    }
+}
+
+void MainWindow::onMainValChanged(Field field, int val)
+{
+
+}
 
 void MainWindow::on_regItemImportButton_clicked()
 {
@@ -87,4 +106,26 @@ void MainWindow::on_regItemClearButton_clicked()
 {
     ui->regItemTable->clearContents();
     ui->regItemTable->setRowCount(0);
+}
+
+void MainWindow::on_regLenBox_valueChanged(int arg1)
+{
+    mainReg->setField({0, arg1 - 1});
+}
+
+void MainWindow::on_changeButton_clicked()
+{
+    int i;
+    Field field;
+    QString name;
+    RegItem* item;
+    removeAll();
+    for(int i = 0; i < ui->regItemTable->rowCount(); i++)
+    {
+        field = {ui->regItemTable->item(i, 1)->text().toInt(), ui->regItemTable->item(i, 2)->text().toInt()};
+        name = ui->regItemTable->item(i, 0)->text();
+        item = new RegItem(name, field);
+        regMap->insert(field, item);
+        itemGLayout->addWidget(item, i / 3, i % 3);
+    }
 }

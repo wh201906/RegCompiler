@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QGridLayout>
+#include <QMap>
 #include "regitem.h"
 
 QT_BEGIN_NAMESPACE
@@ -19,6 +21,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void onMainValChanged(Field field, int val);
 private slots:
     void on_regItemImportButton_clicked();
 
@@ -30,7 +33,15 @@ private slots:
 
     void on_regItemClearButton_clicked();
 
+    void on_regLenBox_valueChanged(int arg1);
+
+    void on_changeButton_clicked();
+
 private:
     Ui::MainWindow *ui;
+    QGridLayout* itemGLayout;
+    QMap<Field, RegItem*> *regMap;
+    RegItem* mainReg;
+    void removeAll();
 };
 #endif // MAINWINDOW_H
