@@ -19,7 +19,7 @@
      <rect>
       <x>9</x>
       <y>9</y>
-      <width>481</width>
+      <width>530</width>
       <height>441</height>
      </rect>
     </property>
@@ -62,6 +62,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="regItemClearButton">
+         <property name="text">
+          <string>Clear</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="regItemImportButton">
          <property name="text">
           <string>Import</string>
@@ -79,27 +86,12 @@
      </item>
      <item>
       <widget class="QTableWidget" name="regItemTable">
-       <property name="dragEnabled">
-        <bool>true</bool>
-       </property>
-       <property name="dragDropOverwriteMode">
-        <bool>true</bool>
-       </property>
-       <property name="dragDropMode">
-        <enum>QAbstractItemView::InternalMove</enum>
-       </property>
-       <property name="defaultDropAction">
-        <enum>Qt::MoveAction</enum>
-       </property>
        <property name="selectionMode">
         <enum>QAbstractItemView::SingleSelection</enum>
        </property>
        <property name="selectionBehavior">
         <enum>QAbstractItemView::SelectRows</enum>
        </property>
-       <attribute name="horizontalHeaderVisible">
-        <bool>true</bool>
-       </attribute>
        <attribute name="verticalHeaderVisible">
         <bool>false</bool>
        </attribute>
@@ -125,13 +117,26 @@
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>20</y>
+      <x>580</x>
+      <y>50</y>
       <width>251</width>
       <height>331</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout"/>
+   </widget>
+   <widget class="QPushButton" name="changeButton">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>200</y>
+      <width>83</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&gt;&gt;</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

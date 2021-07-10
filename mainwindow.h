@@ -26,6 +26,10 @@ private slots:
 
     void on_regItemDeleteButton_clicked();
 
+    void on_regItemExportButton_clicked();
+
+    void on_regItemClearButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
