@@ -6,7 +6,7 @@ RegItem::RegItem(const QString& name, Field field, QWidget *parent) :
     ui(new Ui::RegItem)
 {
     ui->setupUi(this);
-    ui->nameLabel->setText(name);
+    setName(name);
     setField(field);
 }
 
@@ -23,6 +23,11 @@ quint64 RegItem::getVal()
 void RegItem::setVal(quint64 newVal)
 {
     this->val = newVal;
+}
+
+void RegItem::setName(const QString& name)
+{
+    ui->nameLabel->setText(name);
 }
 
 void RegItem::setField(Field field)

@@ -179,4 +179,11 @@ void MainWindow::on_changeButton_clicked()
 void MainWindow::on_hideBox_stateChanged(int arg1)
 {
     ui->leftFrame->setVisible(arg1 == Qt::Checked ? false : true);
+    ui->countLabel->setVisible(arg1 == Qt::Checked ? false : true);
+    ui->hideBox->setText(arg1 == Qt::Checked ? "" : tr("Hide Left"));
+}
+
+void MainWindow::on_nameEdit_textChanged(const QString &arg1)
+{
+    mainReg->setName(arg1);
 }

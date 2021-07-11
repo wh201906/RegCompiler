@@ -41,6 +41,8 @@ private slots:
 
     void on_hideBox_stateChanged(int arg1);
 
+    void on_nameEdit_textChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     QGridLayout* itemGLayout;

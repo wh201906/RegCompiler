@@ -27,6 +27,7 @@ public:
 
     void setField(Field field);
     void updateEdit(int type);
+    void setName(const QString &name);
 private slots:
     void on_binEdit_textChanged(const QString &arg1);
 
